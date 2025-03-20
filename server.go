@@ -19,11 +19,13 @@ import (
 var DB *gorm.DB
 
 type Server struct {
-	userUC     usecase.UserUseCase
-	authUC     usecase.AuthenticationUseCase
-	jwtService service.JwtService
-	engine     *gin.Engine
-	host       string
+	userUC       usecase.UserUseCase
+	bookUC       usecase.BookUseCase
+	borrowBookUC usecase.BorrowBookUseCase
+	authUC       usecase.AuthenticationUseCase
+	jwtService   service.JwtService
+	engine       *gin.Engine
+	host         string
 }
 
 func (s *Server) initRoute() {
@@ -32,7 +34,9 @@ func (s *Server) initRoute() {
 
 	authMiddleware := middleware.NewAuthMiddleware(s.jwtService)
 	rgV1 := s.engine.Group("/api/v1")
-	handler.NewUserHandler(s.userUC, rgV1, authMiddleware)
+	handler.NewUserHandler(s.userUC, rgV1, authMiddleware).Route()
+	handler.NewBookHandler(s.bookUC, rgV1, authMiddleware).Route()
+	handler.NewBorrowBookHandler(s.borrowBookUC, rgV1, authMiddleware).Route()
 }
 
 func (s *Server) initMigration() {
@@ -49,8 +53,8 @@ func (s *Server) initMigration() {
 }
 
 func (s *Server) Run() {
-
 	s.initMigration()
+	s.initRoute()
 
 	if err := s.engine.Run(s.host); err != nil {
 		panic(fmt.Errorf("server not running on host %s, because error %v", s.host, err))
@@ -81,18 +85,24 @@ func NewServer() *Server {
 	jwtService := service.NewJwtService(cfg.TokenConfig)
 
 	userRepo := repository.NewUserRepository(DB)
+	bookRepo := repository.NewBookRepository(DB)
+	borrowBookRepo := repository.NewBorrowRepository(DB)
 
 	userUseCase := usecase.NewUserUseCase(userRepo)
+	bookUseCase := usecase.NewBookUseCase(bookRepo)
+	borrowBookUseCase := usecase.NewBorrowBookUseCase(borrowBookRepo)
 	authUseCase := usecase.NewAuthUseCase(userUseCase, jwtService)
 
 	engine := gin.Default()
 	host := fmt.Sprintf(":%s", cfg.ApiPort)
 
 	return &Server{
-		userUC:     userUseCase,
-		authUC:     authUseCase,
-		jwtService: jwtService,
-		engine:     engine,
-		host:       host,
+		userUC:       userUseCase,
+		bookUC:       bookUseCase,
+		borrowBookUC: borrowBookUseCase,
+		authUC:       authUseCase,
+		jwtService:   jwtService,
+		engine:       engine,
+		host:         host,
 	}
 }
