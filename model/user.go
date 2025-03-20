@@ -4,6 +4,7 @@ import "time"
 
 type User struct {
 	Id        int       `json:"id" gorm:"primaryKey"`
+	Name      string    `json:"name" gorm:"not null;size:255"`
 	Email     string    `json:"email" gorm:"not null;size:255"`
 	Password  string    `json:"password" gorm:"not null;size:255"`
 	Role      string    `json:"role" gorm:"not null;size:50"`
@@ -23,6 +24,7 @@ type InputLogin struct {
 }
 
 type InputRegister struct {
+	Name     string `json:"name" binding:"required"`
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
 	Role     string `json:"role" binding:"required"`
@@ -30,8 +32,8 @@ type InputRegister struct {
 
 type UserResponse struct {
 	Id        int       `json:"id"`
+	Name      string    `json:"name"`
 	Email     string    `json:"email"`
-	Username  string    `json:"username"`
 	IsActive  *bool     `json:"isActive"`
 	Role      string    `json:"role"`
 	CreatedAt time.Time `json:"createdAt"`
@@ -41,6 +43,7 @@ type UserResponse struct {
 func FormatUserResponse(user User) UserResponse {
 	return UserResponse{
 		Id:        user.Id,
+		Name:      user.Name,
 		Email:     user.Email,
 		Role:      user.Role,
 		CreatedAt: user.CreatedAt,

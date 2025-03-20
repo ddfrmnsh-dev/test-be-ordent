@@ -57,6 +57,13 @@ func (uc *userUseCaseImpl) CreateUser(input model.User) (model.User, error) {
 
 	var missingFields []string
 
+	if strings.TrimSpace(input.Role) == "" {
+		missingFields = append(missingFields, "Role")
+	}
+	if strings.TrimSpace(input.Name) == "" {
+		missingFields = append(missingFields, "Name")
+	}
+
 	if strings.TrimSpace(input.Password) == "" {
 		missingFields = append(missingFields, "Password")
 	}
@@ -73,6 +80,8 @@ func (uc *userUseCaseImpl) CreateUser(input model.User) (model.User, error) {
 	if err != nil {
 		return user, err
 	}
+
+	user.Name = input.Name
 	user.Email = strings.ToLower(input.Email)
 	user.Password = string(hashPassword)
 	user.Role = input.Role
@@ -137,6 +146,10 @@ func (uc *userUseCaseImpl) UpdateUser(inputId model.GetCustomerDetailInput, user
 
 	if strings.TrimSpace(user.Role) != "" {
 		checkUser.Role = user.Role
+	}
+
+	if strings.TrimSpace(user.Name) != "" {
+		checkUser.Name = user.Name
 	}
 
 	checkUser.UpdatedAt = time.Now()
