@@ -59,6 +59,7 @@ func (au *authUseCaseImpl) RegisterUser(input model.InputRegister) (model.User, 
 	payload.Email = input.Email
 	payload.Password = input.Password
 	payload.Role = input.Role
+	payload.Name = input.Name
 
 	user, err := au.userUseCase.CreateUser(payload)
 	if err != nil {
