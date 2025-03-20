@@ -124,13 +124,13 @@ func (bc *bookUseCaseImpl) UpdateBook(input model.GetBookDetailInput, book model
 }
 
 func (bc *bookUseCaseImpl) DeleteBookById(id int) (model.Book, error) {
-	book, err := bc.bookRepository.FindById(id)
+	checkBook, err := bc.bookRepository.FindById(id)
 	if err != nil {
-		return book, err
+		return checkBook, fmt.Errorf("buku tidak ditemukan")
 	}
-	book, err = bc.bookRepository.Delete(id)
+	deleteBook, err := bc.bookRepository.Delete(id)
 	if err != nil {
-		return book, err
+		return deleteBook, err
 	}
-	return book, nil
+	return deleteBook, nil
 }

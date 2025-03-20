@@ -64,15 +64,17 @@ func (b *BookRepositoryImpl) FindById(id int) (model.Book, error) {
 }
 
 func (b *BookRepositoryImpl) Delete(id int) (model.Book, error) {
+	checkId, err := b.FindById(id)
+	if err != nil {
+		return checkId, err
+	}
+
 	var book model.Book
 	res := b.db.Delete(&book, id)
 	if res.Error != nil {
 		return book, res.Error
 	}
-	if res.RowsAffected == 0 {
-		return book, gorm.ErrRecordNotFound
-	}
-	return book, nil
+	return checkId, nil
 }
 
 func (b *BookRepositoryImpl) Update(book model.Book) (model.Book, error) {
