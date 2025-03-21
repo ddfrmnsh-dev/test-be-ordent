@@ -51,7 +51,7 @@ func (bh *BookHandler) getAllBook(c *gin.Context) {
 func (bh *BookHandler) createBook(c *gin.Context) {
 	var payload model.Book
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		c.JSON(http.StatusInternalServerError, helper.APIErrorResponse(err.Error()))
+		c.JSON(http.StatusBadRequest, helper.APIErrorResponse(err.Error()))
 		return
 	}
 
@@ -74,7 +74,7 @@ func (bh *BookHandler) getBookById(c *gin.Context) {
 
 	book, err := bh.bookUseCase.FindBookById(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, helper.APIErrorResponse(err.Error()))
+		c.JSON(http.StatusNotFound, helper.APIErrorResponse(err.Error()))
 		return
 	}
 

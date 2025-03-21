@@ -76,7 +76,7 @@ func (uh *UserHandler) getUserById(c *gin.Context) {
 
 	user, err := uh.userUseCase.FindUserById(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, helper.APIErrorResponse(err.Error()))
+		c.JSON(http.StatusNotFound, helper.APIErrorResponse(err.Error()))
 		return
 	}
 
