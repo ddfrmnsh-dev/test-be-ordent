@@ -46,14 +46,12 @@ func (bb *BorrowBookHandler) getAllBorrowBook(c *gin.Context) {
 }
 
 func (bb *BorrowBookHandler) createBorrowBook(c *gin.Context) {
-	// Ambil data user dari context
 	userInterface, exists := c.Get("user")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, helper.APIErrorResponse("User not found"))
 		return
 	}
 
-	// Pastikan user adalah tipe struct User
 	user, ok := userInterface.(model.User)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, helper.APIErrorResponse("Invalid user format"))
