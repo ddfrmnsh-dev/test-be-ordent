@@ -34,7 +34,7 @@ func (au *authUseCaseImpl) LoginUser(email, password string) (string, model.User
 	}
 
 	hasValidRole := false
-	if user.Role == "admin" {
+	if user.Role == "admin" || user.Role == "member" {
 		hasValidRole = true
 	}
 
