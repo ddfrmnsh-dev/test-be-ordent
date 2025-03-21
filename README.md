@@ -64,4 +64,4 @@ Silahkan Import Postman Collection untuk mengetes API.
 test-be-ordent\API Backend Ordent.postman_collection.json
 
 Berikut design arsitektur project dan ERD
-https://github.com/ddfrmnsh-dev/test-be-ordent/blob/main/image/ERD%20Library.drawio.png
+![Screenshot](https://github.com/ddfrmnsh-dev/test-be-ordent/blob/main/image/ERD%20Library.drawio.png)
