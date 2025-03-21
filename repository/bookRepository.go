@@ -26,7 +26,7 @@ func NewBookRepository(db *gorm.DB) *BookRepositoryImpl {
 func (b *BookRepositoryImpl) FindAll() ([]model.Book, error) {
 	var books []model.Book
 
-	res := b.db.Find(&books)
+	res := b.db.Preload("TransactionBooks").Find(&books)
 
 	if res.Error != nil {
 		return books, res.Error

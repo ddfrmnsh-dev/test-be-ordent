@@ -27,7 +27,7 @@ func NewUserRepository(db *gorm.DB) *UserRepositoryImpl {
 func (u *UserRepositoryImpl) FindAll() ([]model.User, error) {
 	var users []model.User
 
-	res := u.db.Find(&users)
+	res := u.db.Preload("TransactionBooks").Find(&users)
 
 	if res.Error != nil {
 		return users, res.Error
