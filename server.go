@@ -90,7 +90,7 @@ func NewServer() *Server {
 
 	userUseCase := usecase.NewUserUseCase(userRepo)
 	bookUseCase := usecase.NewBookUseCase(bookRepo)
-	borrowBookUseCase := usecase.NewBorrowBookUseCase(borrowBookRepo)
+	borrowBookUseCase := usecase.NewBorrowBookUseCase(borrowBookRepo, bookRepo)
 	authUseCase := usecase.NewAuthUseCase(userUseCase, jwtService)
 
 	engine := gin.Default()
