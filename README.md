@@ -21,13 +21,13 @@ Database MySQL
 Clone terlebih dahulu project ini
 
 ```bash
-  git clone https://github.com/ddfrmnsh-dev/test-be-golang.git
+  git clone https://github.com/ddfrmnsh-dev/test-be-ordent.git
 ```
 
 Masuk kedalam direktori
 
 ```bash
-  cd test-be-golang
+  cd test-be-ordent
 ```
 
 Install depedensi go
