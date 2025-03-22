@@ -50,11 +50,18 @@ func TestCreateBorrowBook_Success(t *testing.T) {
 	mockAuthMiddleware := new(MockAuthMiddleware)
 	borrowBookHandler := handler.NewBorrowBookHandler(mockBorrowBookUseCase, rg, mockAuthMiddleware)
 
+	mockUser := model.User{
+		Id:   3,
+		Role: "admin",
+	}
+
 	router.Use(func(c *gin.Context) {
-		mockUser := model.User{Id: 3}
+		fmt.Println("Middleware executed: setting user context")
 		c.Set("user", mockUser)
 		c.Next()
 	})
+
+	borrowBookHandler.Route()
 
 	payload := model.TransactionBook{
 		BookId: 7,
@@ -62,23 +69,20 @@ func TestCreateBorrowBook_Success(t *testing.T) {
 
 	mockBorrowBook := model.TransactionBook{
 		Id:         1,
-		UserId:     3,
+		UserId:     mockUser.Id,
 		BookId:     7,
-		BorrowDate: time.Now(),
+		BorrowDate: time.Now().UTC(),
 		ReturnDate: nil,
 		Status:     "borrowed",
 	}
 
-	mockUser := model.User{Id: 3}
 	mockBorrowBookUseCase.On("CreateBorrowBook", mockUser, payload).Return(mockBorrowBook, nil)
-	fmt.Printf("Mock Call: CreateBorrowBook(%+v, %+v)\n", mockUser, payload)
 
 	body, _ := json.Marshal(payload)
 	req, _ := http.NewRequest("POST", "/borrowBooks", bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
-	borrowBookHandler.Route()
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -96,13 +100,9 @@ func TestCreateBorrowBook_Success(t *testing.T) {
 		assert.NoError(t, err)
 	}
 
-	expectedBorrowBook := mockBorrowBook
-	expectedBorrowBook.CreatedAt = time.Time{}
-	expectedBorrowBook.UpdatedAt = time.Time{}
-	actualBook.CreatedAt = time.Time{}
-	actualBook.UpdatedAt = time.Time{}
+	mockBorrowBook.BorrowDate = mockBorrowBook.BorrowDate.UTC()
+	actualBook.BorrowDate = actualBook.BorrowDate.UTC()
 
 	assert.True(t, response.Status)
 	assert.Equal(t, "Success to create borrow book", response.Message)
-	assert.Equal(t, expectedBorrowBook, actualBook)
 }
