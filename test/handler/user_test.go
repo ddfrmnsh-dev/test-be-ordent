@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"test-be-ordent/handler"
 	"test-be-ordent/helper"
 	"test-be-ordent/model"
@@ -58,6 +59,30 @@ type MockAuthMiddleware struct {
 
 func (m *MockAuthMiddleware) RequireToken(roles ...string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		mockTokenClaim := struct {
+			UserId string
+			Role   string
+		}{
+			UserId: "3",
+			Role:   "admin",
+		}
+
+		validRole := false
+		for _, role := range roles {
+			if role == mockTokenClaim.Role {
+				validRole = true
+				break
+			}
+		}
+
+		if !validRole {
+			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"message": "Forbidden Resource", "status": false})
+			return
+		}
+
+		newId, _ := strconv.Atoi(mockTokenClaim.UserId)
+		ctx.Set("user", model.User{Id: newId, Role: mockTokenClaim.Role})
+
 		ctx.Next()
 	}
 }
